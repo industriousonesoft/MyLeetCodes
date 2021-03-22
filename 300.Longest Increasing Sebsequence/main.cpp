@@ -55,7 +55,7 @@ int dpLengthOfLIS(std::vector<int>& nums) {
 }
 
 // The key logic we need to understand is: the end element of smaller list id smaller than the end element of larger lists.
-// 03-Dinary Search Soulution:
+// 03-Binary Search Soulution:
 int bsSearchAndPosition(std::vector<int>& sorted_array, int end_index, int target_num) {
 	int low_index = 0;
 	int high_index = end_index;
@@ -65,30 +65,41 @@ int bsSearchAndPosition(std::vector<int>& sorted_array, int end_index, int targe
 		mid_index = (low_index + high_index) / 2;
 		int mid_num = sorted_array[mid_index];
 		if (target_num > mid_num) {
-			if (mid_index == high_index) {
-				target_index = mid_index + 1;
+			int next_index = mid_index + 1;
+			// Extend the subsequence
+			if (next_index > high_index) {
+				target_index = next_index;
 				break;
-			}else if (target_num < sorted_array[mid_index+1]) {
-			 	target_index = mid_index + 1;
+			// Replace the next one
+			}else if (target_num < sorted_array[next_index]) {
+			 	target_index = next_index;
 			 	break;
+			 // Continue to search
 			}else {
-			 	low_index = mid_index;
+			 	low_index = next_index;
 			}
 		}else if (target_num < mid_num) {
-			if (mid_index == 0) {
+			int next_index = mid_index - 1;
+			// Replace the first one 
+			if (next_index < 0) {
 				target_index = 0;
 				break;
-			}else if (target_num > sorted_array[mid_index-1]) {
-				target_index = mid_index - 1;
+			// Replace the current one
+			}else if (target_num > sorted_array[next_index]) {
+				target_index = mid_index;
 				break;
+			// Continue to search
 			}else {
-				high_index = mid_index;
+				high_index = next_index;
 			}
+		// Found the same number
 		}else {
+			target_index = mid_index;
 			break;
 		}
 	}
 	sorted_array[target_index] = target_num;
+	// Print the last element all the increasing subsequences
 	for (int i = 0; i < sorted_array.size(); ++i)
 	{
 		if (sorted_array[i] != 0)
@@ -97,6 +108,7 @@ int bsSearchAndPosition(std::vector<int>& sorted_array, int end_index, int targe
 		}
 	}
 	std::cout<< std::endl;
+	// length = target_index + 1
 	return target_index + 1;
 }
 
@@ -118,9 +130,10 @@ int bsLengthOfLIS(std::vector<int>& nums) {
 
 // main
 int main(int argc, const char * argv[]) {
-	std::vector<int> nums = {10,9,2,5,3,7,101,18};
+	// std::vector<int> nums = {10,9,2,5,3,7,101,18};
 	// std::vector<int> nums = {6,16,8,7,4,10,20,19,7,25,29,12};
 	// std::vector<int> nums = {7,7,7,7,7,7,7};
+	std::vector<int> nums = {3,5,6,2,5,4,19,5,6,7,12};
 
 	// int ret = dpLengthOfLIS(nums);
 	// std::cout << "dpLengthOfLIS: " << ret << std::endl;
