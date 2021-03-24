@@ -1,4 +1,11 @@
 /*
+ * @Description: 
+ * @Version: 
+ * @Author: CaoWanPing
+ * @Date: 2021-03-24 18:23:49
+ * @LastEditTime: 2021-03-24 20:32:58
+ */
+/*
  A subsequence is a sequence that can be derived from another sequence 
  by deleting some or no elements without changing the order of the remaining elements
 */
@@ -17,12 +24,10 @@ DP formula: 0 < i,j < s.size()
 // Solutions-1: Recursive
 // Time Complexity: O(n^2) How to estimate this value?
 // Space Commplexity: O(n^2)
-int recur(std::string& s, int l, int r, std::vector<std::vector<int>> memo_table) {
+int recur(std::string& s, int l, int r, std::vector<std::vector<int>>& memo_table) {
     int len = 0;
     // Invailed 
-    if (l > r) {
-        len = 0;
-    }else if (l == r){
+    if (l == r){
         len = 1;
     }else if (s[l] == s[r]) {
         int next = memo_table[l+1][r-1];
@@ -34,10 +39,13 @@ int recur(std::string& s, int l, int r, std::vector<std::vector<int>> memo_table
     }else {
         int next_l = memo_table[l+1][r];
         int next_r = memo_table[l][r-1];
+        std::cout << "memo[" << l+1 << "][" << r << "] = " << next_l << std::endl;
+        std::cout << "memo[" << l << "][" << r-1 << "] = " << next_r << std::endl;
         len = std::max(next_l > 0 ? next_l : recur(s, l+1, r, memo_table), next_r > 0 ? next_r : recur(s, l, r-1, memo_table));
     }
     if (len > 0) {
         memo_table[l][r] = len;
+        std::cout << "new memo[" << l << "][" << r << "] = " << len << std::endl;
     }
     return len;
 }
@@ -48,7 +56,6 @@ int recurLongestPalindromeSubseq(std::string s) {
 }
 
 // Solution-02: Dynamic Programming
-
 int dpLongestPalindromeSubSeq(std::string s) {
     int l,r = -1;
     std::vector<std::vector<int>> dp_table(s.size(), std::vector<int>(s.size(),0));
@@ -64,11 +71,11 @@ int dpLongestPalindromeSubSeq(std::string s) {
 }
 
 int main(int argc, const char * argv[]) {
-    std::string str = "BBABCBCAB";
-    // std::string str = "euazbipzncptldueeuechubrcourfpftcebikrxhybkymimgvldiwqvkszfycvqyvtiwfckexmowcxztkfyzqovbtmzpxojfofbvwnncajvrvdbvjhcrameamcfmcoxryjukhpljwszknhiypvyskmsujkuggpztltpgoczafmfelahqwjbhxtjmebnymdyxoeodqmvkxittxjnlltmoobsgzdfhismogqfpfhvqnxeuosjqqalvwhsidgiavcatjjgeztrjuoixxxoznklcxolgpuktirmduxdywwlbikaqkqajzbsjvdgjcnbtfksqhquiwnwflkldgdrqrnwmshdpykicozfowmumzeuznolmgjlltypyufpzjpuvucmesnnrwppheizkapovoloneaxpfinaontwtdqsdvzmqlgkdxlbeguackbdkftzbnynmcejtwudocemcfnuzbttcoew";
-    // int len = recurLongestPalindromeSubseq(str);
+    // std::string str = "BBABCBCAB";
+    std::string str = "euazbipzncptldueeuechubrcourfpftcebikrxhybkymimgvldiwqvkszfycvqyvtiwfckexmowcxztkfyzqovbtmzpxojfofbvwnncajvrvdbvjhcrameamcfmcoxryjukhpljwszknhiypvyskmsujkuggpztltpgoczafmfelahqwjbhxtjmebnymdyxoeodqmvkxittxjnlltmoobsgzdfhismogqfpfhvqnxeuosjqqalvwhsidgiavcatjjgeztrjuoixxxoznklcxolgpuktirmduxdywwlbikaqkqajzbsjvdgjcnbtfksqhquiwnwflkldgdrqrnwmshdpykicozfowmumzeuznolmgjlltypyufpzjpuvucmesnnrwppheizkapovoloneaxpfinaontwtdqsdvzmqlgkdxlbeguackbdkftzbnynmcejtwudocemcfnuzbttcoew";
+    int len = recurLongestPalindromeSubseq(str);
 
-    // std::cout << " longest palindrome sebsequence: " << len << std::endl;
+    std::cout << " longest palindrome sebsequence: " << len << std::endl;
     return 0;
 }
 
