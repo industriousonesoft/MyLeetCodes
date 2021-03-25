@@ -1,11 +1,4 @@
 /*
- * @Description: 
- * @Version: 
- * @Author: CaoWanPing
- * @Date: 2021-03-24 18:23:49
- * @LastEditTime: 2021-03-24 20:32:58
- */
-/*
  A subsequence is a sequence that can be derived from another sequence 
  by deleting some or no elements without changing the order of the remaining elements
 */
@@ -21,58 +14,47 @@ DP formula: 0 < i,j < s.size()
 #include <string>
 #include <vector>
 
-// Solutions-1: Recursive
-// Time Complexity: O(n^2) How to estimate this value?
+// Solutions-1: Top-Down Approach
+// Time Complexity: O(n^2),
+// 时间复杂度计算：所有需要计算的坐标对应于一个NxN的二维数组，维度为L，R，以L和R维度各扫描一遍二维数组的时间复杂度是O(n^2)，
+// 因此不加备忘录的情况下时间复杂度是O(n^4)，加备忘录的情况下复杂度是O(n^2)
 // Space Commplexity: O(n^2)
 int recur(std::string& s, int l, int r, std::vector<std::vector<int>>& memo_table) {
     int len = 0;
-    // Invailed 
-    if (l == r){
+    if (l >= s.size() || r < 0) {
+    	return 0;
+    }else if (memo_table[l][r] > 0) {
+    	return memo_table[l][r];
+    }else if (l == r) {
         len = 1;
     }else if (s[l] == s[r]) {
-        int next = memo_table[l+1][r-1];
-        if (next > 0) {
-            return next + 2;
-        }else {
-            len = recur(s, l+1, r-1, memo_table) + 2;
-        }
+        len = recur(s, l+1, r-1, memo_table) + 2;
     }else {
-        int next_l = memo_table[l+1][r];
-        int next_r = memo_table[l][r-1];
-        std::cout << "memo[" << l+1 << "][" << r << "] = " << next_l << std::endl;
-        std::cout << "memo[" << l << "][" << r-1 << "] = " << next_r << std::endl;
-        len = std::max(next_l > 0 ? next_l : recur(s, l+1, r, memo_table), next_r > 0 ? next_r : recur(s, l, r-1, memo_table));
+        len = std::max(recur(s, l+1, r, memo_table), recur(s, l, r-1, memo_table));
     }
-    if (len > 0) {
-        memo_table[l][r] = len;
-        std::cout << "new memo[" << l << "][" << r << "] = " << len << std::endl;
-    }
+    memo_table[l][r] = len;
+//    std::cout<< "l:" << l <<",r" << r << " = "<< len << std::endl;
     return len;
 }
 
-int recurLongestPalindromeSubseq(std::string s) {
-    std::vector<std::vector<int>> memo_table(s.size(), std::vector<int>(s.size(),0));
-    return recur(s, 0, s.size()-1, memo_table);
+int recurLongestPalindromeSubseq(std::string& s) {
+	int size = s.size();
+//	std::cout << "size: " << size << std::endl;
+    std::vector<std::vector<int>> memo_table(size, std::vector<int>(size,0));
+    return recur(s, 0, size-1, memo_table);
 }
 
-// Solution-02: Dynamic Programming
-int dpLongestPalindromeSubSeq(std::string s) {
-    int l,r = -1;
+// Solution-02: Down-Up Approach
+int dpLongestPalindromeSubSeq(std::string& s) {
     std::vector<std::vector<int>> dp_table(s.size(), std::vector<int>(s.size(),0));
-    if (s.size() % 2 == 0) {
-        r = s.size() / 2;
-        l = r - 1;
-        dp_table[l][r] = s[l] == s[r] ? 1 : 0;
-    }else {
-        l = r = s.size() / 2;
-        dp_table[l][r] = 1;
-    }
+    
     return 0;
 }
 
 int main(int argc, const char * argv[]) {
-    // std::string str = "BBABCBCAB";
-    std::string str = "euazbipzncptldueeuechubrcourfpftcebikrxhybkymimgvldiwqvkszfycvqyvtiwfckexmowcxztkfyzqovbtmzpxojfofbvwnncajvrvdbvjhcrameamcfmcoxryjukhpljwszknhiypvyskmsujkuggpztltpgoczafmfelahqwjbhxtjmebnymdyxoeodqmvkxittxjnlltmoobsgzdfhismogqfpfhvqnxeuosjqqalvwhsidgiavcatjjgeztrjuoixxxoznklcxolgpuktirmduxdywwlbikaqkqajzbsjvdgjcnbtfksqhquiwnwflkldgdrqrnwmshdpykicozfowmumzeuznolmgjlltypyufpzjpuvucmesnnrwppheizkapovoloneaxpfinaontwtdqsdvzmqlgkdxlbeguackbdkftzbnynmcejtwudocemcfnuzbttcoew";
+//     std::string str = "BBABCBCAB";
+//    std::string str = "bbbab";
+     std::string str = "euazbipzncptldueeuechubrcourfpftcebikrxhybkymimgvldiwqvkszfycvqyvtiwfckexmowcxztkfyzqovbtmzpxojfofbvwnncajvrvdbvjhcrameamcfmcoxryjukhpljwszknhiypvyskmsujkuggpztltpgoczafmfelahqwjbhxtjmebnymdyxoeodqmvkxittxjnlltmoobsgzdfhismogqfpfhvqnxeuosjqqalvwhsidgiavcatjjgeztrjuoixxxoznklcxolgpuktirmduxdywwlbikaqkqajzbsjvdgjcnbtfksqhquiwnwflkldgdrqrnwmshdpykicozfowmumzeuznolmgjlltypyufpzjpuvucmesnnrwppheizkapovoloneaxpfinaontwtdqsdvzmqlgkdxlbeguackbdkftzbnynmcejtwudocemcfnuzbttcoew";
     int len = recurLongestPalindromeSubseq(str);
 
     std::cout << " longest palindrome sebsequence: " << len << std::endl;
