@@ -46,8 +46,12 @@ int recurLongestPalindromeSubseq(std::string& s) {
 
 // Solution-02: Down-Up Approach
 int dpLongestPalindromeSubSeq(std::string& s) {
-    std::vector<std::vector<int>> dp_table(s.size(), std::vector<int>(s.size(),0));
-    
+    int size = s.size();
+    std::vector<std::vector<int>> dp_table(s.size(), std::vector<int>(size,0));
+    for (int i = 0; i < size; ++i) {
+        dp_table[i][i] = 1;
+    }
+    // 解题思路：将原序列划分为多个对称的子序列，然后从各个子序列的对称点向两边扩展，小的子序列的回文序列一定包含于大的子序列中
     return 0;
 }
 
