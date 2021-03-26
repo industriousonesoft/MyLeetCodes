@@ -21,8 +21,8 @@ DP formula: 0 < i,j < s.size()
 // Space Commplexity: O(n^2)
 int recur(std::string& s, int l, int r, std::vector<std::vector<int>>& memo_table) {
     int len = 0;
-    if (l >= s.size() || r < 0) {
-    	return 0;
+    if (l > r || r < l) {
+        return 0;
     }else if (memo_table[l][r] > 0) {
     	return memo_table[l][r];
     }else if (l == r) {
@@ -51,15 +51,26 @@ int dpLongestPalindromeSubSeq(std::string& s) {
     for (int i = 0; i < size; ++i) {
         dp_table[i][i] = 1;
     }
-    // 解题思路：将原序列划分为多个对称的子序列，然后从各个子序列的对称点向两边扩展，小的子序列的回文序列一定包含于大的子序列中
-    return 0;
+    // 解题思路：将原序列拆分成长度不同的子序列，从长度小的序列开始搜索回文序列
+    for (int len = 2; len <= size; ++len) {
+        for (int l = 0; l < size - len + 1; ++l) {
+            int r = l + len - 1;
+            if (s[l] == s[r]) {
+                dp_table[l][r] = len == 2 ? 2 : dp_table[l+1][r-1] + 2;
+            }else {
+                dp_table[l][r] = std::max(dp_table[l+1][r], dp_table[l][r-1]);
+            }
+        }
+    }
+    return dp_table[0][size-1];
 }
 
 int main(int argc, const char * argv[]) {
-//     std::string str = "BBABCBCAB";
-//    std::string str = "bbbab";
+    // std::string str = "BBABCBCAB";
+   // std::string str = "bbbab";
      std::string str = "euazbipzncptldueeuechubrcourfpftcebikrxhybkymimgvldiwqvkszfycvqyvtiwfckexmowcxztkfyzqovbtmzpxojfofbvwnncajvrvdbvjhcrameamcfmcoxryjukhpljwszknhiypvyskmsujkuggpztltpgoczafmfelahqwjbhxtjmebnymdyxoeodqmvkxittxjnlltmoobsgzdfhismogqfpfhvqnxeuosjqqalvwhsidgiavcatjjgeztrjuoixxxoznklcxolgpuktirmduxdywwlbikaqkqajzbsjvdgjcnbtfksqhquiwnwflkldgdrqrnwmshdpykicozfowmumzeuznolmgjlltypyufpzjpuvucmesnnrwppheizkapovoloneaxpfinaontwtdqsdvzmqlgkdxlbeguackbdkftzbnynmcejtwudocemcfnuzbttcoew";
     int len = recurLongestPalindromeSubseq(str);
+     // int len = dpLongestPalindromeSubSeq(str);
 
     std::cout << " longest palindrome sebsequence: " << len << std::endl;
     return 0;
