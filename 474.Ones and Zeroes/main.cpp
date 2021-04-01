@@ -36,6 +36,10 @@ strs[i] consists only of digits '0' and '1'.
 #include <vector>
 #include <string>
 
+// Solution-01: Up-Down Approach
+
+typedef std::vector<std::vector<std::vector<int>>> MemoTable;
+
 int countZeroElementOfStr(std::string& str) {
 	int zero_elem_count = 0;
 	for (int i = 0; i < str.length(); ++i) {
@@ -48,36 +52,45 @@ int countZeroElementOfStr(std::string& str) {
 	return zero_elem_count;
 }
 
-// TODO: 取出重叠运算
-int recursive(std::vector<std::string>& strs, int index, int m, int n) {
+int recursive(std::vector<std::string>& strs, int index, int m, int n, MemoTable& memo_table) {
 	if (index < 0 || index >= strs.size()) {
 		return -1;
+	}
+	int computed_result = memo_table[index][m][n];
+	if ( computed_result >= 0) {
+		return computed_result;
 	}
 	std::string cur_elem = strs[index];
 	int zero_count = countZeroElementOfStr(cur_elem);
 	int one_count = cur_elem.length() - zero_count;
 	std::cout << "elem " << cur_elem << " zero_count: " << zero_count << " one_count: " << one_count << std::endl; 
 	std::cout << "elem " << cur_elem << " m: " << m << " n: " << n << std::endl;   
+	int len = 0;
 	if (zero_count == m && one_count == n) {
-		return 1;
+		len = 1;
 	// 加入当前元素后溢出，则直接进入下一个元素
 	}else if (zero_count > m || one_count > n) {
-		return recursive(strs, index-1, m , n);
+		len = recursive(strs, index-1, m , n, memo_table);
 	// 加入当前元素后还存在差值，更新差值进入下一个元素
 	}else {
 		if (index == 0) {
-			return -1;
+			len = 0;
+		}else {
+			int sub_len = recursive(strs, index-1, m - zero_count, n - one_count, memo_table);
+			len = sub_len > 0 ? sub_len + 1 : 0;
 		}
-		int sub_len = recursive(strs, index-1, m - zero_count, n - one_count);
-		return  sub_len > 0 ? sub_len + 1 : -1;
 	}
+	memo_table[index][m][n] = len;
+	return len;
 }
 
 int findMaxForm(std::vector<std::string>& strs, int m, int n) {
 	int arr_size = strs.size();
 	int max_len = 0;
-	for (int i = 0; i < arr_size; ++i) {
-		max_len = std::max(max_len, recursive(strs, i, m, n));
+	MemoTable memo_table(arr_size,std::vector<std::vector<int>>(m+1,std::vector<int>(n+1, -1)));
+	// 这种遍历方式没有考虑到元素组合之间不一定是要连续的，即第i个元素的处理结果可以直接作用与第i-2之后的元素，而非值作用与第i-1个元素
+	for (int i = arr_size - 1; i >= 0; --i) {
+		max_len = std::max(max_len, recursive(strs, i, m, n, memo_table));
 	}
 	return max_len;
 }
@@ -86,9 +99,12 @@ int main(int argc, const char * argv[]) {
 	// std::vector<std::string> strs = {"10","0001","111001","1","0"};
 	// int m = 5;
 	// int n = 3;
-	std::vector<std::string> strs = {"10","0","1"};
-	int m = 1;
-	int n = 1;
+	// std::vector<std::string> strs = {"10","0","1"};
+	// int m = 1;
+	// int n = 1;
+	std::vector<std::string> strs = {"10","0001","111001","1","0"};
+	int m = 3;
+	int n = 4;
 	int max_len = findMaxForm(strs, m, n);
 	std::cout << "find max form: " << max_len << std::endl;
  	return 0;
