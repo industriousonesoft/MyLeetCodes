@@ -16,6 +16,10 @@ Constraints:
 
 1 <= nums.length <= 200
 1 <= nums[i] <= 100
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/partition-equal-subset-sum
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
 
 #include <iostream>

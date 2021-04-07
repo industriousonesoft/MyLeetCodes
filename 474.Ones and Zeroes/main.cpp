@@ -25,6 +25,10 @@ Constraints:
 1 <= strs[i].length <= 100
 strs[i] consists only of digits '0' and '1'.
 1 <= m, n <= 100
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/ones-and-zeros
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
 
 /*
