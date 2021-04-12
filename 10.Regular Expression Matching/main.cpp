@@ -49,6 +49,10 @@ It is guaranteed for each appearance of the character '*', there will be a previ
 
 using namespace std;
 
+bool match(string a, string b) {
+    return false;
+}
+
 int main(int argc, const char* argv) {
     return 0;
 }
