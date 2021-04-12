@@ -5,7 +5,6 @@ Given an input string (s) and a pattern (p), implement regular expression matchi
 '*' Matches zero or more of the preceding element.
 The matching should cover the entire input string (not partial).
 
- 
 
 Example 1:
 
@@ -45,3 +44,11 @@ It is guaranteed for each appearance of the character '*', there will be a previ
 链接：https://leetcode-cn.com/problems/regular-expression-matching
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
+
+#include <iostream>
+
+using namespace std;
+
+int main(int argc, const char* argv) {
+    return 0;
+}
