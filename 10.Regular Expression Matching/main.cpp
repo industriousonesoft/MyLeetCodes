@@ -49,10 +49,53 @@ It is guaranteed for each appearance of the character '*', there will be a previ
 
 using namespace std;
 
-bool match(string a, string b) {
-    return false;
+bool isMatch(string& a, string& p) {
+    int a_len = a.length();
+    int p_len = p.length();
+    int pos = 0;
+    bool all_match = false;
+    for (int i = 0; i < a_len; i++) {
+       bool is_match = false; 
+       for (int j = pos; j < p_len; j++) {
+           if (p[j] == '.') {
+               is_match = true;
+               pos = j + 1;
+               break;
+           }else if (p[j] == '*') {
+               if (p[j-1] == '.' || p[j-1] == a[i]) {
+                   is_match = true;
+                   if (p[j-1] != '.' && i + 1 < a_len && a[i] != a[i + 1]) {
+                        pos = j + 1;
+                   }
+                   break;
+               }else {
+                   continue;
+               }
+           }else if (p[j] == a[i]) {
+               is_match = true;
+               pos = j + 1;
+               break;
+           }else if (p[j] != a[i] && j < p_len && p[j+1] == '.') {
+               continue;
+           }else {
+               cout << i << ": " << a[i] << " vs " << j << ": "<< p[j] << endl;
+               break;
+           }
+       }
+       all_match = is_match;
+       if (is_match == false) {
+           cout << "break at " << i << " : "<< a[i] << endl;
+           break;
+       }
+    }
+    
+    return all_match;
 }
 
-int main(int argc, const char* argv) {
+int main(int argc, const char* argv[]) {
+    string a = "mississippi";
+    string p = "mis*is*p*.";
+    string result = isMatch(a, p) ? "macth" : "not match";
+    cout << a << " is " << result <<" to '" << p << "'"<< endl;
     return 0;
 }
