@@ -1,7 +1,32 @@
 /*
- A subsequence is a sequence that can be derived from another sequence 
- by deleting some or no elements without changing the order of the remaining elements
+Given a string s, find the longest palindromic subsequence's length in s.
+
+A subsequence is a sequence that can be derived from another sequence by deleting some 
+or no elements without changing the order of the remaining elements.
+
+
+Example 1:
+
+Input: s = "bbbab"
+Output: 4
+Explanation: One possible longest palindromic subsequence is "bbbb".
+Example 2:
+
+Input: s = "cbbd"
+Output: 2
+Explanation: One possible longest palindromic subsequence is "bb".
+ 
+
+Constraints:
+
+1 <= s.length <= 1000
+s consists only of lowercase English letters.
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/longest-palindromic-subsequence
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
+
 /*
 DP formula: 0 < i,j < s.size()
     if s[i] == s[j]; then 
@@ -19,7 +44,7 @@ DP formula: 0 < i,j < s.size()
 // 时间复杂度计算：所有需要计算的坐标对应于一个NxN的二维数组，维度为L，R，以L和R维度各扫描一遍二维数组的时间复杂度是O(n^2)，
 // 因此不加备忘录的情况下时间复杂度是O(n^4)，加备忘录的情况下复杂度是O(n^2)
 // Space Commplexity: O(n^2)
-int recur(std::string& s, int l, int r, std::vector<std::vector<int>>& memo_table) {
+int recur(std::string& s, int l, int r, int** memo_table) {
     int len = 0;
     if (l > r || r < l) {
         return 0;
@@ -40,14 +65,19 @@ int recur(std::string& s, int l, int r, std::vector<std::vector<int>>& memo_tabl
 int recurLongestPalindromeSubseq(std::string& s) {
 	int size = s.size();
 //	std::cout << "size: " << size << std::endl;
-    std::vector<std::vector<int>> memo_table(size, std::vector<int>(size,0));
+    // std::vector<std::vector<int>> memo_table(size, std::vector<int>(size,0));
+    // 使用指针间接引用创建二维数组
+    // 首先创建若干个大小一致的动态数组，然后将这些数组的首地址(转化为指针)按顺序存储到一个动态数组中，就相当于模拟了一个二维动态数组。
+    // 由于低一级的数组是分开创建的，所以整个二维数组的内存不连续。
+    int** memo_table = new int*[size];
     return recur(s, 0, size-1, memo_table);
 }
 
 // Solution-02: Down-Up Approach
 int dpLongestPalindromeSubSeq(std::string& s) {
     int size = s.size();
-    std::vector<std::vector<int>> dp_table(s.size(), std::vector<int>(size,0));
+    int dp_table[size][size];
+    memset(dp_table, 0, sizeof(dp_table));
     for (int i = 0; i < size; ++i) {
         dp_table[i][i] = 1;
     }
