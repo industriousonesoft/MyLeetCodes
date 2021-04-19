@@ -45,56 +45,60 @@ It is guaranteed for each appearance of the character '*', there will be a previ
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
 
+// 题解： s = "ab", p = ".*"， *可以表示0个或多个在其前面的元素，因此".*"可以等价于".."与"ab"匹配
+
 #include <iostream>
 
 using namespace std;
 
+// Solution-01，dp[i][j] = dp[i-1][j-1] && (a[i] == p[j])
 bool isMatch(string& a, string& p) {
-    int a_len = a.length();
-    int p_len = p.length();
-    int pos = 0;
-    bool all_match = false;
-    for (int i = 0; i < a_len; i++) {
-       bool is_match = false; 
-       for (int j = pos; j < p_len; j++) {
-           if (p[j] == '.') {
-               is_match = true;
-               pos = j + 1;
-               break;
-           }else if (p[j] == '*') {
-               if (p[j-1] == '.' || p[j-1] == a[i]) {
-                   is_match = true;
-                   if (p[j-1] != '.' && i + 1 < a_len && a[i] != a[i + 1]) {
-                        pos = j + 1;
-                   }
-                   break;
-               }else {
-                   continue;
-               }
-           }else if (p[j] == a[i]) {
-               is_match = true;
-               pos = j + 1;
-               break;
-           }else if (p[j] != a[i] && j < p_len && p[j+1] == '.') {
-               continue;
-           }else {
-               cout << i << ": " << a[i] << " vs " << j << ": "<< p[j] << endl;
-               break;
-           }
-       }
-       all_match = is_match;
-       if (is_match == false) {
-           cout << "break at " << i << " : "<< a[i] << endl;
-           break;
-       }
+    int row = a.size();
+    int col = a.size();
+    if (row == 0 && col == 0) {
+        return true;
+    }
+    // dp_table表示子串的匹配情况，下标分别代表a和p子串的长度，其中dp_table[0][0]表示二者都是空字符串
+	bool dp_table[row+1][col+1];
+    memset(dp_table, false, sizeof(dp_table));
+    // 二者均为空字符串，匹配成功
+    dp_table[0][0] = true;
+
+    // 因为*出现时字符串的长度至少是2，故下标从2开始
+    for (int i = 2; i < col; i++) {
+         // 当a为空串时，只可能与p中的'*'匹配，'.'表示的是字符，故不能与空串匹配
+        // 空串除了匹配空串，还可以匹配诸如：".*"或"a*b*c*"之类的字符串
+        if (p[i] == '*') {
+            dp_table[0][i] == dp_table[0][i-2];
+        }
+    }
+
+    // dp_table下标表示的字符子串的长度，因此等于a,p字符串下标+1
+    for (int i = 1; i < row + 1; i++) {
+        for (int j = 1; j < col + 1; j++) {
+            // 当前a与p的单个字符匹配成功，则对应的字符子串是否匹配取决于前面的字符是否匹配成功
+            if (p[j-1] == '.' || a[i-1] == p[j-1]) {
+                dp_table[i][j] == dp_table[i-1][j-1];
+            // 当前字符为’*‘时，分两种情况：
+            }else if (j > 1 && p[j-1] == '*') {
+                // 情况一：’*‘的作用是消除前一个字符，因此当前子串的匹配结果与其在p[j-3]处的匹配结果一致
+                // 理解难点：此处i的下标值未变，变化的是j的下标，是同一个a子串匹配不同的p子串，比如：ac可以同时匹配：ac和acd*
+                dp_table[i][j] = dp_table[i][j-2];
+                // 情况二：’*‘的作用拓展前一个字符，且扩展的字符与当前字符匹配
+                if (p[j-2] == '.' || a[i-1] == p[j-2]) {
+                    // 用’或‘操作符是为了将第一种情况考虑的结果进来，二选一只要有一种情况匹配即可
+                    dp_table[i][j] = dp_table[i][j] | dp_table[i-1][j-2];
+                }
+            }
+        }
     }
     
-    return all_match;
+    return false;
 }
 
 int main(int argc, const char* argv[]) {
-    string a = "mississippi";
-    string p = "mis*is*p*.";
+    string a = "ab";
+    string p = ".*c";
     string result = isMatch(a, p) ? "macth" : "not match";
     cout << a << " is " << result <<" to '" << p << "'"<< endl;
     return 0;
