@@ -54,7 +54,7 @@ using namespace std;
 // Solution-01，dp[i][j] = dp[i-1][j-1] && (a[i] == p[j])
 bool isMatch(string& a, string& p) {
     int row = a.size();
-    int col = a.size();
+    int col = p.size();
     if (row == 0 && col == 0) {
         return true;
     }
@@ -65,11 +65,11 @@ bool isMatch(string& a, string& p) {
     dp_table[0][0] = true;
 
     // 因为*出现时字符串的长度至少是2，故下标从2开始
-    for (int i = 2; i < col; i++) {
+    for (int i = 2; i < col + 1; i++) {
          // 当a为空串时，只可能与p中的'*'匹配，'.'表示的是字符，故不能与空串匹配
         // 空串除了匹配空串，还可以匹配诸如：".*"或"a*b*c*"之类的字符串
-        if (p[i] == '*') {
-            dp_table[0][i] == dp_table[0][i-2];
+        if (p[i-1] == '*') {
+            dp_table[0][i] = dp_table[0][i-2];
         }
     }
 
@@ -78,7 +78,7 @@ bool isMatch(string& a, string& p) {
         for (int j = 1; j < col + 1; j++) {
             // 当前a与p的单个字符匹配成功，则对应的字符子串是否匹配取决于前面的字符是否匹配成功
             if (p[j-1] == '.' || a[i-1] == p[j-1]) {
-                dp_table[i][j] == dp_table[i-1][j-1];
+                dp_table[i][j] = dp_table[i-1][j-1];
             // 当前字符为’*‘时，分两种情况：
             }else if (j > 1 && p[j-1] == '*') {
                 // 情况一：’*‘的作用是消除前一个字符，因此当前子串的匹配结果与其在p[j-3]处的匹配结果一致
@@ -87,18 +87,18 @@ bool isMatch(string& a, string& p) {
                 // 情况二：’*‘的作用拓展前一个字符，且扩展的字符与当前字符匹配
                 if (p[j-2] == '.' || a[i-1] == p[j-2]) {
                     // 用’或‘操作符是为了将第一种情况考虑的结果进来，二选一只要有一种情况匹配即可
-                    dp_table[i][j] = dp_table[i][j] | dp_table[i-1][j-2];
+                    dp_table[i][j] = dp_table[i][j] | dp_table[i-1][j];
                 }
             }
         }
     }
     
-    return false;
+    return dp_table[row][col];
 }
 
 int main(int argc, const char* argv[]) {
-    string a = "ab";
-    string p = ".*c";
+    string a = "aa";
+    string p = "a*";
     string result = isMatch(a, p) ? "macth" : "not match";
     cout << a << " is " << result <<" to '" << p << "'"<< endl;
     return 0;
