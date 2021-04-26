@@ -44,7 +44,7 @@ int dpCoinChange(std::vector<int>& coins, int amount) {
     }else if (amount == 0) {
         return 0;
     }
-    std::vector<int> dp_table = std::vector<int>(amount+1);
+    int dp_table[amount+1];
     // 自底向上计算最优子集，如果子集已经是最优解，那么基于子集计算的结果一定是最优解
     for(int change = 1; change <= amount; change++) {
         // 最优解的初始值是本身，即只由面值为1的硬币组成

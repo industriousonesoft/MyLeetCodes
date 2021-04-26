@@ -45,7 +45,8 @@ It is guaranteed for each appearance of the character '*', there will be a previ
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
 
-// 题解： s = "ab", p = ".*"， *可以表示0个或多个在其前面的元素，因此".*"可以等价于".."与"ab"匹配
+// 理解： s = "ab", p = ".*"， *可以表示0个或多个在其前面的元素，因此".*"可以等价于".."与"ab"匹配
+// 题解： s与p原字符串匹配的前提是各自的子串匹配，因此可原题拆分成子串匹配，用dp[i][j]表示长度为i的s子串与长度为j的p子串是否匹配
 
 #include <iostream>
 
@@ -61,12 +62,12 @@ bool isMatch(string& a, string& p) {
     // dp_table表示子串的匹配情况，下标分别代表a和p子串的长度，其中dp_table[0][0]表示二者都是空字符串
 	bool dp_table[row+1][col+1];
     memset(dp_table, false, sizeof(dp_table));
-    // 二者均为空字符串，匹配成功
+    // dp_table[0][0]表示s和p子串均为空字符串，匹配成功
     dp_table[0][0] = true;
 
-    // 因为*出现时字符串的长度至少是2，故下标从2开始
+    // 因为*有效的前提是字符串长度至少是2，故下标从2开始
     for (int i = 2; i < col + 1; i++) {
-         // 当a为空串时，只可能与p中的'*'匹配，'.'表示的是字符，故不能与空串匹配
+        // 当a为空串时，只可能与p中的'*'匹配，'.'表示的是字符，故不能与空串匹配
         // 空串除了匹配空串，还可以匹配诸如：".*"或"a*b*c*"之类的字符串
         if (p[i-1] == '*') {
             dp_table[0][i] = dp_table[0][i-2];

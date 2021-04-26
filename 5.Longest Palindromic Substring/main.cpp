@@ -1,12 +1,64 @@
+/*
+ * @Description: 
+ * @Version: 
+ * @Author: CaoWanPing
+ * @Date: 2021-04-09 18:57:21
+ * @LastEditTime: 2021-04-09 19:11:16
+ */
+/*
+Given a string s, return the longest palindromic substring in s.
+
+ 
+
+Example 1:
+
+Input: s = "babad"
+Output: "bab"
+Note: "aba" is also a valid answer.
+Example 2:
+
+Input: s = "cbbd"
+Output: "bb"
+Example 3:
+
+Input: s = "a"
+Output: "a"
+Example 4:
+
+Input: s = "ac"
+Output: "a"
+ 
+
+Constraints:
+
+1 <= s.length <= 1000
+s consist of only digits and English letters (lower-case and/or upper-case),
+
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/longest-palindromic-substring
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+*/
+
+/*
+回文字符串的特点是字符串基于中点对称，且去掉两端的字符得到的子串也一定是回文字符串，此外单个字符也属于回文字符串。
+求解最长回文字符串，将字符串看成一个字符数组，LP[i][j]表示下标i、j包含的回文字符串的长度，则状态转移方程为： 
+LP[i][j] = LP[i+1][j-1] + 2, 0 <= i <= j, j < s.length
+LP[i][i] = 1, 0 <= i < s.length
+ */
+
 #include <iostream>
 #include <string>
 #include <vector>
 
-// DP fomular: LP[i][j] = LP[i+1][j-1]
-// Solution-01: Bottom-Up Approach
-std::string longestPalindrome(std::string& str) {
+using namespace std;
+
+// DP fomular: LP[i][j] = LP[i+1][j-1] + 2
+// Solution: Bottom-Up Approach
+string longestPalindrome_BU(string& str) {
 	int size = str.size();
-	std::vector<std::vector<int>> dp_table(size, std::vector<int>(size, 0));
+	int dp_table[size][size];
+	memset(dp_table, 0, sizeof(dp_table));
 	for (int i = 0; i < size; i++) {
 		dp_table[i][i] = 1;
 	}
@@ -16,7 +68,7 @@ std::string longestPalindrome(std::string& str) {
 		for (int l = 0; l < size - len + 1; l++) {
 			int r = l + len - 1;
 			if (str[l] == str[r]) {
-				// std::cout << "str[" << l << "]: " << str[l] << " - str[" << r << "]: " << str[r] << std::endl; 
+				// cout << "str[" << l << "]: " << str[l] << " - str[" << r << "]: " << str[r] << endl; 
 				if (len == 2) {
 					dp_table[l][r] = 2;
 				// Make sure the substring is palindromic
@@ -26,7 +78,7 @@ std::string longestPalindrome(std::string& str) {
 				if (dp_table[l][r] > dp_table[max_l][max_r]) {
 					max_l = l;
 					max_r = r;
-					// std::cout << "max_l: " << max_l << " - max_r: " << max_r << std::endl;
+					// cout << "max_l: " << max_l << " - max_r: " << max_r << endl;
 				}
 			}
 		}
@@ -35,8 +87,8 @@ std::string longestPalindrome(std::string& str) {
 }
 
 int main(int argc, const char * argv[]) {
-	std::string str = "aacabdkacaa";
-	std::string result = longestPalindrome(str);
-	std::cout << "longest palindrome: " << result << std::endl;
+	string str = "aacabdkacaa";
+	string result = longestPalindrome(str);
+	cout << "longest palindrome: " << result << endl;
 	return 0;
 }
