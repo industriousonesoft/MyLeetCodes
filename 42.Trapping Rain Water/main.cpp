@@ -27,7 +27,8 @@ n == height.length
 
 using namespace std;
 
-int trap(vector<int>& nums) {
+// Approach-01: 时间复杂度O(n^2)，空间复杂度O(1)
+int trap_01(vector<int>& nums) {
     size_t count = nums.size();
     if (nums.size() == 0) {
         return 0;
@@ -73,10 +74,49 @@ int trap(vector<int>& nums) {
     return sum;
 }
 
+// Approach-02: 时间复杂度O(n)， 空间复杂度O(n*2)
+// 题解：每一个数字看成一个宽度为1的蓄水单元，且相互孤立，而某个单元是否可蓄水取决于其左右两边是否均有比其更高的单元，如果表示可蓄水，且蓄水高度取决于两边较低的单元
+int trap(vector<int>& nums) {
+    int count = nums.size();
+    if (nums.size() == 0) {
+        return 0;
+    }
+    int right[count];
+    int left[count];
+    // NOTE: 此处应该用sizeof来计算数组的长度，把数组类型考虑在其中，而非直接使用n
+    memset(left, 0, sizeof(left));
+    memset(right, 0, sizeof(right));
+    // 统计第i个单元左边最大的高度值，不包括i单元本身
+    // 由于i=0时无左边单元，因此下标从0开始
+    for (int i = 1; i < count; i++) {
+        left[i] = max(left[i - 1], nums[i - 1]);
+    }
+    // 统计第i个单元右侧最大的高度值，不包括i单元本身
+    // 由于第n-1个单元无右边单元，因此下标从n-2开始
+    for (int i = count - 2; i >= 0; i--) {
+        right[i] = max(right[i + 1], nums[i + 1]);
+    }
+    int sum = 0;
+    int top = 0;
+    int bottom = 0;
+    // 计算每一个单元的蓄水量
+    // 因为第一个和最后一个单元都是边界单元，本身不能蓄水
+    for (int i = 1; i < count - 1; i++) {
+        // 蓄水高度取决于单元两侧峰值中较低的一个高度值
+        top = min(left[i], right[i]);
+        bottom = nums[i];
+        // 因为width = 0，因此蓄水面积之间等于高度差
+        // 用因为如果两侧峰值均小于当前元素的高度，计算结果为负值，表示当前单元无蓄水能力，用0表示
+        sum += max(0, top - bottom);
+    }
+    return sum;
+}
+
 int main(int argc, const char* argv[]) {
     // vector<int> nums = {0,1,0,2,1,0,1,3,2,1,2,1};
-    vector<int> nums = {4,2,0,3,2,5};
+    // vector<int> nums = {4,2,0,3,2,5};
     // vector<int> nums = {5,4,1,2};
+    vector<int> nums = {4,2,3};
     cout << " traped water: " << trap(nums) << endl;
     return 0;
 }
