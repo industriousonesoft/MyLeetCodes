@@ -38,27 +38,30 @@ It's guaranteed that the answer will be less than or equal to 2 * 109.
 
 #include <iostream>
 
-// 题解： 
+using namespace std;
+
 int uniquePaths(int m, int n) {
-    if (m <= 0 && n <= 0) {
+    if (m <= 0 || n <= 0) {
         return 0;
     }
     int dp[m][n];
-    memset(dp, 0, size_t(dp));
+    memset(dp, 0, sizeof(dp));
     for (size_t i = 0; i < m; i++) {
         for (size_t j = 0; j < n; j++) {
-            if (i < m - 1) {
-                dp[i][j] += 1;
-            }
-            if (j < n - 1) {
-                dp[i][j] += 1;
+            // 到与起点在同一维度的点，只有一条路径可选
+            if (i == 0 || j == 0) {
+                dp[i][j] = 1;
+            }else {
+                // 与起点不再同一维度的点，存在向右和向下选择
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
             }
         }
     }
-    
-    return 0;
+    return dp[m-1][n-1];
 }
 
 int main(int argc, const char* argv[]) {
+    int m = 3, n = 0;
+    cout << "m: " << m << " n: " << n << " res: " << uniquePaths(m, n) << endl; 
     return 0;
 }
