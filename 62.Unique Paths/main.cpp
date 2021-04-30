@@ -49,6 +49,7 @@ int uniquePaths(int m, int n) {
     for (size_t i = 0; i < m; i++) {
         for (size_t j = 0; j < n; j++) {
             // 到与起点在同一维度的点，只有一条路径可选
+            // 起点到自身的路径也是1
             if (i == 0 || j == 0) {
                 dp[i][j] = 1;
             }else {
