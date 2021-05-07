@@ -32,9 +32,32 @@ n == grid[i].length
 using namespace std;
 
 int minPathSum(vector<vector<int>>& grid) {
-    return 0;
+    int row = grid.size();
+    if (row == 0) return 0;
+    int col = grid[0].size();
+    if (col == 0) return 0;
+    for (size_t i = 0; i < row; i++) {
+        for (size_t j = 0; j < col; j++) {
+            if (i == 0) {
+                if (j > 0) {
+                    grid[i][j] += grid[i][j-1];
+                }
+            }else if (j == 0) {
+                if (i > 0) {
+                    grid[i][j] += grid[i-1][j];
+                }
+            }else {
+                grid[i][j] += min(grid[i-1][j], grid[i][j-1]);
+            }
+        }
+    }
+    return grid[row-1][col-1];
 }
 
 int main(int argc, const char* argv[]) {
+    // vector<vector<int>> grid = {{1,3,1}, {1,5,1}, {4,2,1}};
+    vector<vector<int>> grid = {{1,2,3},{4,5,6}};
+    int ret = minPathSum(grid);
+    cout << "min path sum: " << ret << endl;
     return 0;
 }
