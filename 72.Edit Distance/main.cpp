@@ -47,18 +47,54 @@ using namespace std;
 /*
 题解：采样动态规划思维，两个原字符串的编辑距离最优解可分解为二者子串之间的编辑距离最优解
 用dp[i][j]表示word1长度为i的子串编辑成word2长度为j的子串需要的最小操作步骤数，因此
-dp[0][0] = 0
-dp[0][j] = j, j > 0
-dp[i][0] = i, i > 0
-word1[i-1] != word2[j-1], dp[i][j] = min(dp[i-1][j-1] + (word1[i-1] == word2[j-1] ? 0 : 1) /* 相等时不做任何操作，不相等时执行替换操作 */, dp[i-1][j] + 1 /* 执行插入操作 */, dp[i][j-1] + 1 /* 执行删除操作 */)
+word1和word2子串均为空串时，二者相等，不需要编辑：dp[0][0] = 0
+word1子串为空串，只能执行j次插入操作：dp[0][j] = j, j > 0
+word2子串为空串，只能执行i次删除操作：dp[i][0] = i, i > 0
 
+不做任何操作：
+word1[i-1] == word2[j-1]时，，dp[i][j] = dp[i-1][j-1]
+执行替换操作：
+word1[i-1] != word2[j-1]时，dp[i][j] = dp[i-1][j-1] + 1
+执行插入操作：往长度为i-1的word1子串插入一个字符，结果为长度为i的word1子串匹配长度为j的word2子串
+dp[i][j] = dp[i-1][j] + 1
+执行删除操作：删除长度为i的word1子串的最后一个字符，结果为长度为i-1的word1子串匹配长度为j-1的word2子串
+dp[i][j] = dp[i][j-1] + 1
 */
 
-int editDistance(string word1, string word2) {
-
-    return 0;
+int minDistance(string word1, string word2) {
+	size_t row = word1.size();
+	size_t col = word2.size();
+	int dp[row+1][col+1];
+	memset(dp, 0, sizeof(dp));
+	for (size_t i = 0; i <= row; i++ ) {
+		for (size_t j = 0; j <= col; j++) {
+			if (i == 0) {
+				// 执行j此插入操作
+				dp[i][j] = j;
+			}else if (j == 0) {
+				// 执行i此删除操作
+				dp[i][j] = i;
+			}else {
+				// 不需要执行任何操作
+				if (word1[i-1] == word2[j-1]) {
+					dp[i][j] = dp[i-1][j-1];
+				// 执行一次替换操作
+				}else {
+					dp[i][j] = dp[i-1][j-1] + 1;
+				}
+				// 执行一次插入操作
+				dp[i][j] = min(dp[i][j], dp[i-1][j] + 1);
+				// 执行一次删除操作
+				dp[i][j] = min(dp[i][j], dp[i][j-1] + 1);
+			}
+		}
+	}
+    return dp[row][col];
 }
 
 int main(int argc, const char* argv[]) {
+	// string word1 = "horse", word2 = "ros";
+	string word1 = "intention", word2 = "execution";
+	cout << "Min Edit Distance: " << minDistance(word1, word2) << endl;
     return 0;
 }
