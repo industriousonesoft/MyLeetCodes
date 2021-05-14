@@ -30,6 +30,7 @@ Constraints:
 */
 
 #include<iostream>
+#include<math.h>
 
 using namespace std;
 
@@ -39,21 +40,49 @@ using namespace std;
 // n是非素数, 因式分解n=ixj，将长度为i的字符串设置B，问题变成使用最少次数可以将B字符串变成j个B字符串，将求dp[n]转变成求dp[j]的问题，且dp[n] = dp[i] /* 先获得长度为i的子串需要的最少步骤 */ + dp[j] /* 然后再基于长度为i的B字符串，获得j个B子串的最少步骤 */
 // n是素数，dp[n] = dp[0] + n
 // 至此原问题转变成了判断数字n是否为素数的问题
-int minSteps(int n) {
+
+// 时间复杂度O(n*sqrt(n)) 空间复杂度：O(n+1)
+int minSteps_1(int n) {
 	if (n <= 1) return 0;
 	int dp[n+1];
 	memset(dp, 0, sizeof(dp));
-	dp[2] = 2;
+	// 因式分解，分解得到的两个数a,b,a<=b，那么a<=tmp，b>=tmp
+	int tmp = sqrt(n);
 	for (int i = 2; i < n + 1; ++i) {
+		// 假设i本身就是素数
 		dp[i] = i;
-		for (int j = 2; j < i; ++j) {
-
+		for (int j = 2; j <= tmp; ++j) {
+			// i可拆分
+			if (i % j == 0) {
+				dp[i] = dp[j] + dp[i/j];
+			}
 		}
 	}
-	return 0;
+	return dp[n];
 }
 
+int minSteps(int n) {
+	if (n <= 1) return 0;
+	int sum = 0;
+	while(n >= 2) {
+		for (int i = 2; i <= n; ++i) {
+			// 表示n可拆分，因为i是大于1的，因此即便n是素数也可以被自身整除一次，如果n不是素数，因为i是从2开始递增，因此每次整除时i一定是素数
+			if (n % i == 0) {
+				// 素数的操作数刚好等于自身
+				sum += i;
+				// 继续拆分
+				n = n / i;
+				break;
+			}
+		}
+	}
+	return sum;
+}
+
+
 int main(int argc, const char* argv[]) {
-	cout << "Min steps: " << minSteps(9) << endl;
+	int n = 14;
+	cout << "1- Min steps: " << minSteps_1(n) << endl;
+	cout << "2- Min steps: " << minSteps(n) << endl;
 	return 0;
 }

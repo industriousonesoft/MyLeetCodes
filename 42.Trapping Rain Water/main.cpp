@@ -105,7 +105,7 @@ int trap(vector<int>& nums) {
         // 蓄水高度取决于单元两侧峰值中较低的一个高度值
         top = min(left[i], right[i]);
         bottom = nums[i];
-        // 因为width = 0，因此蓄水面积之间等于高度差
+        // 因为width = 1，因此蓄水面积之间等于高度差
         // 用因为如果两侧峰值均小于当前元素的高度，计算结果为负值，表示当前单元无蓄水能力，用0表示
         sum += max(0, top - bottom);
     }
