@@ -43,3 +43,46 @@ s1 and s2 consist of lower-case English letters.
 链接：https://leetcode-cn.com/problems/scramble-string
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
+
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+bool isScramble(string s1, string s2) {
+	if (s1.size() != s2.size()) return false;
+	if (s1 == s2) return true;
+	int size = s1.size();
+	int map[size];
+	memset(map,0,sizeof(map));
+	// 比较s1,s2是否包含相同的字符集
+	for (int i = 0; i < size; ++i)
+	{
+		map[s1[i] - 'a']++;
+		map[s2[i] - 'a']--;
+	}
+	for (int i = 0; i < 26; ++i)
+	{
+		if (map[i] != 0) return false;
+	}
+
+	for (int len = 1; len < size; ++len)
+	{
+		string s1_left = s1.substr(0,len);
+		string s1_right = s1.substr(len);
+		if (isScramble(s1_left, s2.substr(0,len)) && isScramble(s1_right, s2.substr(len))) 
+			return true;
+		if (isScramble(s1_left, s2_right) && isScramble(s1_right, s2_left)) 
+			return true;
+	}
+	return false;
+}
+
+int main(int argc, const char* argv[]) {
+	string s1 = "great";
+	string s2 = "rgeat";
+	cout << s1 << " and " << s2 <<" is scramble: ";
+	isScramble(s1, s2) ? (cout << "true") : (cout << "false");
+	cout << endl;
+	return 0;
+}
