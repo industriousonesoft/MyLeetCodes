@@ -119,6 +119,9 @@ bool isScrambleWithPrimeSet(string s1, string s2) {
 	return false;
 }
 
+// 采用动态规划的方式解题： 时间复杂度O(n^4), 空间复杂度O(n^3)
+// 使用一个三维数据dp[i][j][len]表示从s1起点为i长度为len和s2起点为j长度为len的两个子串是否是scambling，如果是为true，反之为false
+// 对于某个len值，只要存在一种切割方式能够s1.substr(i,len)和s2.substr(j,len)满足scrambling即可
 bool isScrambleDP(string s1, string s2) {
 	if (s1.size() != s2.size()) return false;
     if (s1 == s2) return true;
@@ -131,9 +134,12 @@ bool isScrambleDP(string s1, string s2) {
                 if (len == 1) {
                     dp[i][j][1] = s1[i] == s2[j];
                 } else {
+                	// 遍历切割方式，k表示每次切割的长度，寻找一种能满足s1和s2子串满足scraling的切割方式即可
                     for (int k = 1; k < len; ++k) {
-                        if ((dp[i][j][k] && dp[i + k][j + k][len - k]) || (dp[i + k][j][len - k] && dp[i][j + len - k][k])) {
+                        if ((dp[i][j][k] && dp[i + k][j + k][len - k])/* ss1左与ss2左，ss1右与ss2右比较 */ || 
+                        	(dp[i + k][j][len - k] && dp[i][j + len - k][k])/* ss1左与ss2右，ss1左与ss2右比较 */ ) {
                             dp[i][j][len] = true;
+                            break;
                         }
                     }
                 }                
@@ -143,6 +149,7 @@ bool isScrambleDP(string s1, string s2) {
     return dp[0][0][n];
 }
 
+// 还可以通过健身、踢球和跑步来增强体质 进而让宝宝更加健康  
 int main(int argc, const char* argv[]) {
 	string s1 = "great";
 	string s2 = "rgeat";
