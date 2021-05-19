@@ -73,9 +73,60 @@ int maximalRectangle(vector<vector<char>>& matrix) {
 }
 
 // 题解二：将二维数据抽象成直方图，将行看成是直方图的横坐标轴，列为直方图的纵坐标轴，原问题变成求直方图中面积最大的矩形
+int maximalRectangle2(vector<vector<char>>& matrix) {
+	int rows = matrix.size();
+	if (mrows == 0) return 0;
+	int cols = matrix[0].size();
+	if (cols == 0) return 0;
+
+	int max_sum = 0;
+	int left[cols];
+	memset(left, 0, sizeof(left));
+	int right[cols];
+	memset(right, cols, sizeof(right));
+	int height[cols];
+	memset(height, 0, sizeof(height));
+
+	for (int i = 0; i < rows; i++) {
+		int curr_left =0;
+		int curr_right = cols;
+
+		for (int j = 0; j < cols; j++) {
+			// 寻找当前列所在连续直方图的左边界
+			if (matrix[i][j] == '1') {
+				height[j] += 1;
+				left[j] = max(left[j], curr_left);
+			}else {
+				// 由于row是递增的，当前列一旦出现’0‘说明以当前行做为横坐标轴时不能构成直方图
+				height[j] = 0;
+				left[j] = 0;
+				// 如果当前列不能构成直方图，则更新当前左边界，用以后续匹配
+				curr_left = j + 1;
+			}
+		}
+
+		for (int j = cols-1; j >= 0; j--) {
+			// 寻找当前列所在连续直方图的右边界
+			if (matrix[i][j] == '1') {
+				right[j] = min(right[j], curr_right);
+			}else {
+				right[j] = cols;
+				curr_right = j;
+			}
+		}
+
+		for (int j = 0; j < cols; j++) {
+			// TODO: 为什么会出现left > right的情况？
+			if (right[j] > left[j]) {
+				max_sum = max(max_sum, (right[j]-left[j]) * height[j]);
+			}
+		}
+	}
+	return max_sum;
+}
 
 int main(int argc, const char* argv[]) {
 	vector<vector<char>> matrix = {{'1','0','1','0','0'},{'1','0','1','1','1'},{'1','1','1','1','1'},{'1','0','0','1','0'}};
-	cout << "max sum: " << maximalRectangle(matrix) << endl;
+	cout << "max sum: " << maximalRectangle2(matrix) << endl;
 	return 0;
 }
