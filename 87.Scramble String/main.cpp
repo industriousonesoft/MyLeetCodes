@@ -149,7 +149,7 @@ bool isScrambleDP(string s1, string s2) {
     return dp[0][0][n];
 }
 
-// 还可以通过健身、踢球和跑步来增强体质 进而让宝宝更加健康  
+
 int main(int argc, const char* argv[]) {
 	string s1 = "great";
 	string s2 = "rgeat";

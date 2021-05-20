@@ -95,12 +95,15 @@ int maximalRectangle2(vector<vector<char>>& matrix) {
 			// 寻找当前列所在连续直方图的左边界
 			if (matrix[i][j] == '1') {
 				height[j] += 1;
+				// left[j]表示j列的历史值，即在当前行之前的左边界，curr_left表示当前行的左边界
+				// 取二者的更大值作为当前列的新边界值
 				left[j] = max(left[j], curr_left);
 			}else {
 				// 由于row是递增的，当前列一旦出现’0‘说明以当前行做为横坐标轴时不能构成直方图
 				height[j] = 0;
+				// 如果当前列在当前行不能构成直方图，则重置当前列的左边界，作为下一行遍历的初始值
 				left[j] = 0;
-				// 如果当前列不能构成直方图，则更新当前左边界，用以后续匹配
+				// 更新当前行的左边界
 				curr_left = j + 1;
 			}
 		}
@@ -110,11 +113,14 @@ int maximalRectangle2(vector<vector<char>>& matrix) {
 			if (matrix[i][j] == '1') {
 				right[j] = min(right[j], curr_right);
 			}else {
+				// 如果当前列在当前行不能构成直方图，则重置当前列的右边界，作为下一行遍历的初始值
 				right[j] = cols;
+				// 更新当前行的右边界
 				curr_right = j;
 			}
 		}
 
+		// 计算以当前行作为横坐标轴的直方图面积
 		for (int j = 0; j < cols; j++) {
 			// TODO: 为什么会出现left > right的情况？
 			if (right[j] > left[j]) {
