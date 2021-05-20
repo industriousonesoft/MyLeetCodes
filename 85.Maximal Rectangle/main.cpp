@@ -44,9 +44,10 @@ using namespace std;
 // 所以dp[i][j][end_i][end_j] = dp[i][j][end_i-1][end_j] && dp[i][j][end_i][end_j-1]
 // 时间复杂度： O(m^2xn^2) 空间复杂度：O(mxmxnxn)
 int maximalRectangle(vector<vector<char>>& matrix) {
-	if (matrix.size() == 0) return 0;
 	int rows = matrix.size();
+	if (mrows == 0) return 0;
 	int cols = matrix[0].size();
+	if (cols == 0) return 0;
 	bool dp[rows][cols][rows][cols];
 	memset(dp, false, sizeof(dp));
 	int max_sum = 0;
@@ -73,6 +74,7 @@ int maximalRectangle(vector<vector<char>>& matrix) {
 }
 
 // 题解二：将二维数据抽象成直方图，将行看成是直方图的横坐标轴，列为直方图的纵坐标轴，原问题变成求直方图中面积最大的矩形
+// 时间复杂度：O(mxn) 空间复杂度：O(n)
 int maximalRectangle2(vector<vector<char>>& matrix) {
 	int rows = matrix.size();
 	if (mrows == 0) return 0;
@@ -88,12 +90,14 @@ int maximalRectangle2(vector<vector<char>>& matrix) {
 	memset(height, 0, sizeof(height));
 
 	for (int i = 0; i < rows; i++) {
+		// 记录当前行为坐标轴的左右边界值，随着列的值而实时更新
 		int curr_left =0;
 		int curr_right = cols;
 
 		for (int j = 0; j < cols; j++) {
 			// 寻找当前列所在连续直方图的左边界
 			if (matrix[i][j] == '1') {
+				// 当前列的高度值累加，left[j]和right[j]确保height[j]能够构成一个矩形
 				height[j] += 1;
 				// left[j]表示j列的历史值，即在当前行之前的左边界，curr_left表示当前行的左边界
 				// 取二者的更大值作为当前列的新边界值
