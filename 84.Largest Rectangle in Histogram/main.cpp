@@ -24,14 +24,13 @@ Constraints:
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 */
 
-// 题解：这道题是在刷了85题之后顺带刷的同类型题目
-// 数组进行三次扫描，第一次确定每一个高度所在的直方图的左边界，同理第二次是确定有边界，第三次则是计算每个直方图的面积，并比较出大最值。
-
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
+//解法一：为每一个高度确定左右边界，然后求面积。
+// 时间复杂度： O(n^2)，空间复杂度：O(n), 但提交超时了
 int largestRectangleArea(vector<int>& heights) {
 	int cols = heights.size();
 	if (cols == 0) return 0;
@@ -42,32 +41,24 @@ int largestRectangleArea(vector<int>& heights) {
 	// memset(left, 0, sizeof(left));
 	// memset(right, cols, sizeof(right));
 
+	int area_max = 0;
+	// 确定每个直方图的左边界
 	for (int i = 0; i < cols; ++i) {
 		left[i] = 0;
-		right[i] = cols;
-	}
-
-	int area_max = 0;
-	for (int i = 0; i < cols; ++i) {
-		// 寻找左边界
 		for (int j = 0; j < i; ++j) {
 			if (heights[i] > heights[j]) {
-				left[i] = j;
-			}else {
-				left[i] = left[j];
+				left[i] = j+1;
 			}
 		}
+	}
 
-		// 寻找右边界
+	for (int i = cols - 1; i >= 0; --i) {
+		right[i] = cols;
 		for (int j = cols - 1; j > i; --j) {
 			if (heights[i] > heights[j]) {
 				right[i] = j;
-			}else {
-				right[i] = right[j];
 			}
 		}
-		cout << endl;
-		cout << "i: " << i << " - left: " << left[i] << " right: " << right[i] << " height: " << heights[i] << endl;
 		if (right[i] > left[i] && heights[i] > 0) {
 			area_max = max(area_max, (right[i] - left[i]) * heights[i]);
 		}
@@ -76,9 +67,34 @@ int largestRectangleArea(vector<int>& heights) {
 	return area_max;
 }
 
+// 解法二：先找到递增序列中的最大值，然后计算该值前的面积，然后继续寻找下一个递增序列的最大值，依次类推
+int largestRectangleArea2(vector<int>& heights) {
+	int cols = heights.size();
+	if (cols == 0) return 0;
+	int max_area = 0;
+	for (int i = 0; i < cols; ++i)
+	{
+		// 寻找数组中的某个峰值
+		if (i + 1 < cols && heights[i] < heights[i+1]) continue;
+
+		// 计算该峰值之前的区域面积
+		int minHeight = heights[i];
+		max_area = max(max_area, heights[i]);
+		for (int j = i - 1; j >= 0; --j)
+		{
+			// 因为j可能是在此峰值之前的某个峰值，因此min操作可确保当前j能够构成直方图
+			minHeight = min(minHeight, heights[j]);
+			max_area = max(max_area, (i - j + 1) * minHeight);
+		}
+	}
+	return max_area;
+}
+
 int main(int argc, const char* argv[]) {
-	vector<int> heights = {2,1,5,6,2,3};
+	// vector<int> heights = {2,1,5,6,2,3};
 	// vector<int> heights = {2,4};
-	cout << "largetst rectangle area: " << largestRectangleArea(heights) << endl;
+	// vector<int> heights = {6, 2, 5, 4, 5, 1, 6};
+	vector<int> heights = {4,2,0,3,2,4,3,4};
+	cout << "largetst rectangle area: " << largestRectangleArea2(heights) << endl;
 	return 0;
 }
