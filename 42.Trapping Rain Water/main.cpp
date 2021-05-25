@@ -87,7 +87,7 @@ int trap(vector<int>& nums) {
     memset(left, 0, sizeof(left));
     memset(right, 0, sizeof(right));
     // 统计第i个单元左边最大的高度值，不包括i单元本身
-    // 由于i=0时无左边单元，因此下标从0开始
+    // 由于i=0时无左边单元，因此下标从1开始
     for (int i = 1; i < count; i++) {
         left[i] = max(left[i - 1], nums[i - 1]);
     }
