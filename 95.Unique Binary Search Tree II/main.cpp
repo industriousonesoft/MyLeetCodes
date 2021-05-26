@@ -35,8 +35,28 @@ struct TreeNode {
  };
 
 vector<TreeNode*> generateTrees(int n) {
-	vector<TreeNode*> trees;
-	return trees; 
+	vector<TreeNode*> trees_0;
+	if (n < 0) return trees_0;
+	vector<TreeNode*> dp[n+1];
+	trees_0.push_back(new TreeNode());
+	dp[0] = trees_0;
+	vector<TreeNode*> trees_1;
+	trees_1.push_back(new TreeNode(1));
+	dp[1] = trees_1;
+	for (int i = 2; i <= n; ++i) {
+		vector<TreeNode*> trees;
+	 	for (int j = 1; j <= i; ++j) {
+	 		vector<TreeNode*> left_trees = dp[j-1];
+	 		vector<TreeNode*> right_trees = dp[i-j];
+	 		for (int l = 0; l < left_trees.size(); l++) {
+	 			for (int r = 0; r < right_trees.size(); r++) {
+	 				trees.push_back(new TreeNode(j,left_trees[l],right_trees[r]));
+	 			}
+	 		}
+	 	}
+	 	dp[i] = trees;
+	}
+	return dp[n]; 
 }
 
 int main(int argc, const char* argv[]) {
