@@ -45,7 +45,7 @@ int numTrees(int n) {
 	 		// dp[i-j]表示右边i-j个节点能构成的二叉树个数
 	 		dp[i] += dp[j-1]*dp[i-j];
 	 	}
-	} 
+	}
 	return dp[n];
 }
 
