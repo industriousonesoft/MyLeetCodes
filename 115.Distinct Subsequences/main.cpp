@@ -44,9 +44,38 @@ s and t consist of English letters.
 using namespace std;
 
 int numDistinct(string s, string t) {
-	return 0;
+	int s_size = s.size();
+	int t_size = t.size();
+	// dp[m][n]表示长度为m的s子串中包含长度为n的t子串的次数
+	unsigned int dp[s_size+1][t_size+1];
+	dp[0][0] = 1;
+	// t为空串时，可以匹配一次任意长度的s子串
+	for (int i = 1; i <= s_size; ++i) {
+		dp[i][0] = 1;
+	}
+	// s为空串时，任意非0长度的t子串都不可能匹配成功
+	for (int i = 1; i <= t_size; ++i) {
+		dp[0][i] = 0;
+	}
+	for (int i = 1; i <= s_size; ++i) {
+		for (int j = 1; j <= t_size; ++j) {
+			// s和t当前子串的最后一次的字符不匹配，则当前t子串与长度为i的s子串匹配次数等于与长度为i-1的s子串的匹配次数
+			if (s[i-1] != t[j-1]) {
+				dp[i][j] = dp[i-1][j];
+			}else {
+				// s和t当前子串的最后一次的字符匹配时，当前子串有两种匹配选择：
+				// 1. 忽略当前字符匹配，让长度为i-1的s子串匹配长度为j的t子串
+				// 2. 记录当前字符匹配，长度为i的s子串与长度为j的t子串匹配次数等于长度为i-1的s子串与长度为j-1的t子串匹配次数
+				dp[i][j] = dp[i-1][j] + dp[i-1][j-1];
+			}
+		}
+	}
+	return dp[s_size][t_size];
 }
 
 int main(int argc, const char* argv[]) {
+	string s = "babgbag";
+	string t = "bag";
+	cout << " num distinct: " << numDistinct(s, t) << endl;
 	return 0;
 }
