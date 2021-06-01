@@ -46,6 +46,7 @@ Constraints:
 
 using namespace std;
 
+// 时间复杂度：O(n^2)，空间复杂度：O(1)
 int maxProfit(vector<int>& prices) {
 	int n = prices.size();
 	int last_buy = prices[0];
@@ -53,16 +54,19 @@ int maxProfit(vector<int>& prices) {
 	int max_profit = 0;
 	for (int i = 1; i < n; ++i)
 	{
-		if (prices[i] < last_buy) {
+		// 确保抛售时的价格是一个低谷值
+		if (prices[i] < last_buy && i < n - 1 && prices[i] < prices[i+1]) {
 			last_buy = prices[i];
 			last_sell = last_buy;
 		}else if (prices[i] > last_sell) {
+			if ( i < n - 1 && prices[i] <= prices[i+1] ) {
+				continue;
+			}
 			last_sell = prices[i];
 			int profit = last_sell - last_buy;
-			// 可开启第二次交易的条件：
-			// 条件一：后面至少还有两个交易日，才能确保一次有效的交易，如果只有一个交易日，那么第二次交易利润为0
-			// 条件二：下一个的股价低于当前股价，只有才有交易价值
-			if (i < n-2 && prices[i+1] < prices[i]) {
+ 			// 可开启的条件：后面至少还有两个交易日，才能确保一次有效的交易，如果只有一个交易日，那么第二次交易利润为0
+ 			// 两次交易之间是允许有间隔的，当prices[i]==prices[i+1]时也可以交易
+			if (i < n-2 ) {
 				int sec_last_buy = prices[i+1];
 				int sec_last_sell = sec_last_buy;
 				int sec_profit = 0;
