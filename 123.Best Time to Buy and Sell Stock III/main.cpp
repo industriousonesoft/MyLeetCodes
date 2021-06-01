@@ -47,7 +47,7 @@ Constraints:
 using namespace std;
 
 // 时间复杂度：O(n^2)，空间复杂度：O(1)
-int maxProfit(vector<int>& prices) {
+int maxProfit01(vector<int>& prices) {
 	int n = prices.size();
 	int last_buy = prices[0];
 	int last_sell = prices[0];
@@ -88,11 +88,41 @@ int maxProfit(vector<int>& prices) {
 	return max_profit;
 }
 
+int maxProfit(vector<int>& prices) {
+	int n = prices.size();
+
+	int dp_front[n];
+	int dp_back[n];
+	// dp_front[i]表示在i之前能买的最大利润
+	memset(dp_front, 0, sizeof(dp_front));
+	// dp_front[i]表示在i之后能买的最大利润
+	memset(dp_back, 0, sizeof(dp_back));
+
+	for (int i = 1, valley = prices[0]; i < n; ++i)
+	{
+		valley = min(valley, prices[i]);
+		dp_front[i] = max(dp_front[i-1], prices[i] - valley);
+	}
+
+	for (int i = n - 2, peak = prices[n-1]; i >= 0; --i)
+	{
+		peak = max(peak, prices[i]);
+		dp_back[i] = max(dp_back[i+1], peak - prices[i]);
+	}
+
+	int max_profit = dp_front[0] + dp_back[0];
+	for (int i = 1; i < n; ++i)
+	{
+		max_profit = max(max_profit, dp_front[i] + dp_back[i]);
+	}
+	return max_profit;
+}
+
 int main(int argc, const char* argv[]) {
 	// vector<int> prices = {3,3,5,0,0,3,1,4};
 	// vector<int> prices = {1,2,3,4,5};
-	// vector<int> prices = {3,2,6,5,0,3};
-	vector<int> prices = {8,3,6,2,8,8,8,4,2,0,7,2,9,4,9};
+	vector<int> prices = {3,2,6,5,0,3};
+	// vector<int> prices = {8,3,6,2,8,8,8,4,2,0,7,2,9,4,9};
 	cout << "max profit: " << maxProfit(prices) << endl;
 	return 0;
 }
