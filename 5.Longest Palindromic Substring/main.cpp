@@ -15,16 +15,16 @@ Example 1:
 Input: s = "babad"
 Output: "bab"
 Note: "aba" is also a valid answer.
-Example 2:
 
+Example 2:
 Input: s = "cbbd"
 Output: "bb"
-Example 3:
 
+Example 3:
 Input: s = "a"
 Output: "a"
-Example 4:
 
+Example 4:
 Input: s = "ac"
 Output: "a"
  
@@ -55,7 +55,7 @@ using namespace std;
 
 // DP fomular: LP[i][j] = LP[i+1][j-1] + 2
 // Solution: Bottom-Up Approach
-string longestPalindrome_BU(string& str) {
+string longestPalindrome2(string& str) {
 	int size = str.size();
 	int dp_table[size][size];
 	memset(dp_table, 0, sizeof(dp_table));
@@ -80,6 +80,34 @@ string longestPalindrome_BU(string& str) {
 					max_r = r;
 					// cout << "max_l: " << max_l << " - max_r: " << max_r << endl;
 				}
+			}
+		}
+	}
+	return str.substr(max_l, max_r - max_l + 1);
+}
+
+// A more efficient and clear approach
+string longestPalindrome(string& str) {
+	int n = str.length();
+	int dp[n][n];
+	memset(dp, 0, sizeof(dp));
+	int max_l = 0;
+	int max_r = 0;
+	for (int r = 0; r < n; ++r)
+	{
+		for (int l = 0; l <= r; ++l)
+		{
+			if (str[l] == str[r]) {
+				int len = r - l + 1;
+				 if (len <= 3) {
+				 	dp[l][r] = len;
+				 }else if (dp[l+1][r-1] > 0) {
+				 	dp[l][r] = dp[l+1][r-1] + 2;
+				 }
+				 if (dp[l][r] > dp[max_l][max_r]) {
+				 	max_l = l;
+				 	max_r = r;
+				 }
 			}
 		}
 	}
