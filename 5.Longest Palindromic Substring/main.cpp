@@ -86,6 +86,34 @@ string longestPalindrome2(string& str) {
 	return str.substr(max_l, max_r - max_l + 1);
 }
 
+string longestPalindrome3(string& str) {
+	int size = str.size();
+	int dp_table[size][size];
+	memset(dp_table, 0, sizeof(dp_table));
+	int max_l = 0;
+	int max_r = 0;
+	for (int len = 1; len <= size; len++) {
+		for (int l = 0; l < size - len + 1; l++) {
+			int r = l + len - 1;
+			if (str[l] == str[r]) {
+				// cout << "str[" << l << "]: " << str[l] << " - str[" << r << "]: " << str[r] << endl; 
+				if (len <= 3) {
+					dp_table[l][r] = len;
+				// Make sure the substring is palindromic
+				}else if (dp_table[l+1][r-1] > 0) {
+					dp_table[l][r] = dp_table[l+1][r-1] + 2;
+				}
+				if (dp_table[l][r] > dp_table[max_l][max_r]) {
+					max_l = l;
+					max_r = r;
+					// cout << "max_l: " << max_l << " - max_r: " << max_r << endl;
+				}
+			}
+		}
+	}
+	return str.substr(max_l, max_r - max_l + 1);
+}
+
 // A more efficient and clear approach
 string longestPalindrome(string& str) {
 	int n = str.length();
