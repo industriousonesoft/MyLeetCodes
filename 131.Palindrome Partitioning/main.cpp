@@ -47,10 +47,8 @@ vector<vector<string>> partition(string s) {
 			if (s[l] == s[r] && ( (r - l <= 2) || dp[l+1][r-1] )) {
 				dp[l][r] = true;
 				auto sub_str = s.substr(l, r - l + 1);
-				cout << "sub_str: " << sub_str << endl;
-				// 遍历l之前的子串的拆分方式
+				// 遍历l之前的子串的拆分组合，加入新的回文子串
 				for (auto list : dp_pplists[l]) {
-					// 基于长度为j的子串拆分组合，加入新的回文子串，构建新的拆分队列
 					list.push_back(sub_str);
 					// 更新长度为r的子串的拆分组合
 					dp_pplists[r+1].push_back(list);
@@ -62,21 +60,19 @@ vector<vector<string>> partition(string s) {
 }
 
 int main(int argc, const char* argv[]) {
-	vector<vector<string>> pplists = partition("aab");
-	/*
-	cout << pplists.size() << endl;
+	vector<vector<string>> pplists = partition("aabbaab");
 	cout << "[";
-	for (int i = 1; i < pplists.size(); ++i)
+	for (int i = 0; i < pplists.size(); ++i)
 	{
 		auto pplist = pplists[i];
 		cout << "[";
-		for (int j = 0; j < pplist.size(); ++j)
+		for (auto str : pplist)
 		{
-			cout << "\"" << pplist[i] << "\"";
+			cout << "\"" << str << "\"";
 		}
 		cout << "],";
 	}
 	cout << "]" << endl;
-	*/
+	
 	return 0;
 }
