@@ -35,36 +35,28 @@ using namespace std;
 
 int minCut(string s) {
 	int n = s.size();
-	// dp_count[i]用于记录长度为i的子串可拆分的组合的长度
-	vector<vector<int>> dp_count(n+1);
-	dp_count[0].push_back(0);
+	// dp_cut[i]表示下标i之前的子串的最小切割次数，注：下标为i时，子串长度为i+1
+	int dp_cut[n];
+	memset(dp_cut, 0, sizeof(dp_cut));
 	// dp_ps[i][j]表示下标i到j之间的子串是否是回文字符串
 	bool dp_ps[n][n];
 	memset(dp_ps, 0, sizeof(dp_ps));
-	for (int r = 0; r < n; ++r)
-	{
-		for (int l = 0; l <= r; ++l)
-		{
+	for (int r = 0; r < n; ++r) {
+		// 长度为r+1的子串最大切割次数为r，即单个字符为一个回文子串
+		dp_cut[r] = r;
+		for (int l = 0; l <= r; ++l) {
 			if (s[l] == s[r] && ( r - l < 3 || dp_ps[l+1][r-1] )) {
 				dp_ps[l][r] = true;
-				for (auto count : dp_count[l])
-				{
-					count += 1;
-					dp_count[r+1].push_back(count);
-				}
+				// 当l为0时表示不需要切割，因此一定是最小切割次数
+				dp_cut[r] = l == 0 ? 0 : min(dp_cut[r], dp_cut[l-1] + 1);
 			}
 		}
 	}
-	int min_count = dp_count[n][0];
-	for (int i = 1; i < dp_count[n].size(); ++i)
-	{
-		min_count = min(min_count, dp_count[n][i]);
-	}
-	return min_count - 1;
+	return dp_cut[n-1];
 }
 
 int main(int argc, const char* argv[]) {
-	string s = "aabaaab";
+	string s = "aabbaaab";
 	cout << "min cut: " << minCut(s) << endl;
 	return 0;
 }
