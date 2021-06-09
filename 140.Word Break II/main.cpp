@@ -35,13 +35,52 @@ All the strings of wordDict are unique.
 
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 
 using namespace std;
 
 vector<string> wordBreak(string s, vector<string>& wordDict) {
-
+	unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+	int n = s.length();
+	// dp_match[i]表示长度为i的子串是否成功匹配
+	bool dpMatch[n+1];
+	memset(dpMatch, false, sizeof(dpMatch));
+	dpMatch[0] = true;
+	int minWordLen = wordDict[0].length();
+	int maxWordLen = minWordLen;
+	for (int i = 1; i < wordDict.size(); ++i)
+	{
+		minWordLen = min(minWordLen, (int)wordDict[i].length());
+		maxWordLen = max(maxWordLen, (int)wordDict[i].length());
+	}
+	// dp[i]用于存储长度为i的子串可由wordDict中的子串拼接的所有句子
+	vector<vector<string>> dp(n+1, vector<string>());
+	for (int r = minWordLen - 1; r < n; r++) {
+		for (int l = max(0, r - maxWordLen); l <= r; l++) {
+			auto sub_str = s.substr(l, r - l + 1);
+			if (dpMatch[l] && wordSet.count(sub_str) > 0) {
+				dpMatch[r+1] = true;
+				if (l == 0) {
+					dp[r+1].push_back(sub_str);
+				}else {
+					for (auto sent : dp[l]) {
+						sent += " " + sub_str;
+						dp[r+1].push_back(sent);
+					}
+				}
+				
+			}
+		}
+	}
+	return dp[n];
 }
 
 int main(int argc, const char* argv[]) {
+	string s = "catsanddog";
+	vector<string> wordDict = {"cat","cats","and","sand","dog"};
+	auto sentences = wordBreak(s, wordDict);
+	for (auto sent : sentences) {
+		cout << sent << endl;
+	}
 	return 0;
 }
