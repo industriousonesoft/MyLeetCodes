@@ -1,4 +1,4 @@
-/*
+xz/*
 Given a string s and a dictionary of strings wordDict, add spaces in s to construct a sentence where each word is a valid dictionary word. Return all such possible sentences in any order.
 
 Note that the same word in the dictionary may be reused multiple times in the segmentation.
@@ -39,6 +39,7 @@ All the strings of wordDict are unique.
 
 using namespace std;
 
+// 时间复杂度：O(n^2), 空间复杂度： O(n)
 vector<string> wordBreak(string s, vector<string>& wordDict) {
 	unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
 	int n = s.length();
@@ -68,7 +69,6 @@ vector<string> wordBreak(string s, vector<string>& wordDict) {
 						dp[r+1].push_back(sent);
 					}
 				}
-				
 			}
 		}
 	}
