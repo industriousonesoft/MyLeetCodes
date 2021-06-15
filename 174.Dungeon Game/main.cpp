@@ -46,8 +46,46 @@ n == dungeon[i].length
 
 using namespace std;
 
-int calculateMinimumHP(vector<vector<int>>& dungeon) {
+int calcMinHPSupplement(int healthPoint) {
+	return healthPoint > 0 ? 0 : abs(healthPoint) + 1;
+}
 
+int calculateMinimumHP(vector<vector<int>>& dungeon) {
+	int m = dungeon.size();
+	if (m == 0) return 0;
+	int n = dungeon[0].size();
+	if (n == 0) return 0;
+	int dp_left[m][n];
+	memset(dp_left, 0, sizeof(dp_left));
+	dp_left[0][0] = dungeon[0][0];
+	// dp[m][n]表示从（0,0）到达（m,n)时骑士需要初始化的最小血点值
+	int dp_init[m][n];
+	memset(dp_init, 0, sizeof(dp_init));
+	cout << endl;
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			if (i == 0) {
+				if (j > 0) {
+					dp_left[i][j] = dp_left[i][j-1] + dungeon[i][j];
+					dp_init[i][j] = dp_init[i][j-1];
+				}
+			}else if (j == 0) {
+				if (i > 0) {
+					dp_left[i][j] = dp_left[i-1][j] + dungeon[i][j];
+					dp_init[i][j] = dp_init[i-1][j];
+				}
+			}else {
+				dp_left[i][j] = max(dp_left[i-1][j], dp_left[i][j-1]);
+				dp_init[i][j] = min(dp_init[i-1][j], dp_init[i][j-1]);	
+			}
+			if (dp_left[i][j] + dp_init[i][j] <= 0) {
+				dp_init[i][j] = calcMinHPSupplement(dp_left[i][j]);
+			}
+			cout << i << " - " << j << " - " << dp_init[i][j] << " - " << dp_left[i][j] << endl;
+		}
+	}
 	return 0;
 }
 
